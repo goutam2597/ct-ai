@@ -8,12 +8,15 @@ use App\Modules\Analytics\Http\Controllers\AlertsController;
 use App\Modules\Billing\Http\Controllers\BillingController;
 use App\Modules\Billing\Http\Controllers\WebhookController;
 use App\Modules\Collection\Http\Controllers\BrandController;
+use App\Modules\Collection\Http\Controllers\ReportController;
+use App\Modules\Ops\Http\Controllers\Admin\BillingKeysController;
 use App\Modules\Ops\Http\Controllers\Admin\DashboardController;
 use App\Modules\Ops\Http\Controllers\Admin\EnginesController;
 use App\Modules\Ops\Http\Controllers\Admin\WorkspacesController;
 use App\Modules\Ops\Http\Controllers\SetupController;
 use App\Modules\Site\Http\Controllers\FreeCheckController;
 use App\Modules\Site\Http\Controllers\MarketingController;
+use App\Modules\Site\Http\Controllers\SharedReportController;
 use App\Modules\Tenancy\Http\Controllers\WorkspaceController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -79,6 +82,14 @@ Route::middleware(['auth', 'verified', 'workspace.context'])->group(function ():
 
     Route::get('/brands/{brand}', [BrandController::class, 'show'])->name('brands.show');
     Route::get('/brands/{brand}/answers', [BrandController::class, 'answers'])->name('brands.answers');
+    Route::get('/brands/{brand}/report', [ReportController::class, 'pdf'])
+        ->name('brands.report');
+    Route::get('/brands/{brand}/share-links', [ReportController::class, 'shareLinks'])
+        ->name('brands.share-links');
+    Route::post('/brands/{brand}/share-links', [ReportController::class, 'createShareLink'])
+        ->name('brands.share-links.create');
+    Route::delete('/brands/{brand}/share-links/{shareLink}', [ReportController::class, 'revokeShareLink'])
+        ->name('brands.share-links.destroy');
     Route::post('/brands/{brand}/sweep', [BrandController::class, 'runSweep'])->name('brands.sweep');
 
     Route::get('/alerts', [AlertsController::class, 'index'])->name('alerts.index');
@@ -95,4 +106,10 @@ Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')
     Route::get('/workspaces', [WorkspacesController::class, 'index'])->name('workspaces');
     Route::get('/engines', [EnginesController::class, 'index'])->name('engines');
     Route::post('/engines/{engine}/test', [EnginesController::class, 'test'])->name('engines.test');
+    Route::get('/billing', [BillingKeysController::class, 'index'])->name('billing');
+    Route::post('/billing/keys', [BillingKeysController::class, 'save'])->name('billing.keys');
 });
+
+// Public share links (no auth; token is the credential).
+Route::get('/reports/{token}', [SharedReportController::class, 'show'])
+    ->name('reports.shared');

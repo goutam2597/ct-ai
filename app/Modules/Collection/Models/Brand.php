@@ -77,6 +77,12 @@ class Brand extends Model
         return $this->hasMany(Sweep::class);
     }
 
+    /** @return HasMany<ShareLink, $this> */
+    public function shareLinks(): HasMany
+    {
+        return $this->hasMany(ShareLink::class);
+    }
+
     /**
      * Every name/domain string this brand is recognised by.
      *

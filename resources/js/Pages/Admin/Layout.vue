@@ -16,6 +16,7 @@ defineProps<{ title: string; app: { name: string } }>();
                         <a href="/admin" class="text-neutral-400 hover:text-white">Dashboard</a>
                         <a href="/admin/workspaces" class="text-neutral-400 hover:text-white">Workspaces</a>
                         <a href="/admin/engines" class="text-neutral-400 hover:text-white">Engines</a>
+                        <a href="/admin/billing" class="text-neutral-400 hover:text-white">Billing</a>
                     </nav>
                 </div>
                 <form method="POST" action="/logout">
