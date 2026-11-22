@@ -105,6 +105,8 @@ Route::middleware(['auth', 'verified', 'workspace.context'])->group(function ():
     Route::get('/brands/{brand}/competitors', [BrandTabController::class, 'competitors'])->name('brands.competitors');
     Route::get('/brands/{brand}/sources', [BrandTabController::class, 'sources'])->name('brands.sources');
     Route::get('/brands/{brand}/perception', [BrandTabController::class, 'perception'])->name('brands.perception');
+    Route::get('/brands/{brand}/directories', [BrandTabController::class, 'directories'])->name('brands.directories');
+    Route::get('/brands/{brand}/commerce', [BrandTabController::class, 'commerce'])->name('brands.commerce');
 
     Route::get('/alerts', [AlertsController::class, 'index'])->name('alerts.index');
     Route::post('/alerts/channels', [AlertsController::class, 'addChannel'])->name('alerts.channels.store');

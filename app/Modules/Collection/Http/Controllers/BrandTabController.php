@@ -6,6 +6,8 @@ use App\Modules\ApiPlatform\Services\ApiRateService;
 use App\Modules\Collection\Models\Answer;
 use App\Modules\Collection\Models\AnswerMention;
 use App\Modules\Collection\Models\Brand;
+use App\Modules\Collection\Services\CommerceReadinessService;
+use App\Modules\Collection\Services\DirectoriesService;
 use App\Modules\Tenancy\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -104,6 +106,26 @@ final class BrandTabController extends Controller
             'toneByEngine' => $toneByEngine,
             'themes' => $themes,
             'engines' => (array) $brand->engines,
+        ]);
+    }
+
+    public function directories(Brand $brand, DirectoriesService $service): Response
+    {
+        Gate::authorize('view', $brand);
+
+        return Inertia::render('Brands/Directories', [
+            'brand' => ['id' => $brand->id, 'name' => $brand->name],
+            'directories' => $service->rankFor($brand, 30),
+        ]);
+    }
+
+    public function commerce(Brand $brand, CommerceReadinessService $service): Response
+    {
+        Gate::authorize('view', $brand);
+
+        return Inertia::render('Brands/Commerce', [
+            'brand' => ['id' => $brand->id, 'name' => $brand->name],
+            'readiness' => $service->score($brand),
         ]);
     }
 }

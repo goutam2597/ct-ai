@@ -10,9 +10,12 @@ const tabs = [
     { key: 'overview', label: 'Overview', path: '' },
     { key: 'answers', label: 'Answers', path: '/answers' },
     { key: 'competitors', label: 'Competitors', path: '/competitors' },
+    { key: 'sources', label: 'Sources', path: '/sources' },
     { key: 'opportunities', label: 'Opportunities', path: '/opportunities' },
     { key: 'briefs', label: 'Content briefs', path: '/content-briefs' },
     { key: 'perception', label: 'Perception', path: '/perception' },
+    { key: 'directories', label: 'Directories', path: '/directories' },
+    { key: 'commerce', label: 'Commerce', path: '/commerce' },
     { key: 'site-check', label: 'Site check', path: '/site-check' },
     { key: 'share-links', label: 'Share links', path: '/share-links' },
 ];
