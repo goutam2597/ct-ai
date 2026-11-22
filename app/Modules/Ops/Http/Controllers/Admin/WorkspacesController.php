@@ -6,7 +6,6 @@ use App\Modules\Billing\Services\PlanFeatures;
 use App\Modules\Collection\Models\Answer;
 use App\Modules\Ops\Http\Controllers\Controller;
 use App\Modules\Tenancy\Models\Workspace;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,13 +19,13 @@ final class WorkspacesController extends Controller
     {
         $rows = Workspace::query()
             ->with(['owner:id,name,email', 'subscription:id,workspace_id,plan_id,status'])
-            ->withCount(['memberships', 'brands' => fn (Builder $q) => $q->withoutGlobalScopes()])
+            ->withCount(['memberships', 'brands'])
             ->orderBy('id')
             ->get()
             ->map(fn (Workspace $workspace) => [
                 'id' => $workspace->id,
                 'name' => $workspace->name,
-                'owner' => $workspace->owner?->email,
+                'owner' => $workspace->owner->email,
                 'plan' => $features->plan($workspace)?->name,
                 'status' => $workspace->subscription?->status?->value,
                 'brands' => $workspace->brands_count,

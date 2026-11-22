@@ -40,8 +40,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
             $table->foreignId('answer_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('brand_id')->constrained()->cascadeOnDelete();
-            /** The tracked brand this mention belongs to: the brand or one of its competitors. */
+            /** Your-mention rows point at the tracked brand; rival rows at competitors. */
+            $table->foreignId('brand_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('competitor_id')->nullable()->constrained()->cascadeOnDelete();
             $table->unsignedTinyInteger('position')->nullable();
             $table->string('tone', 8)->nullable();
             $table->string('matched_by', 8);
@@ -50,6 +51,7 @@ return new class extends Migration
 
             $table->index(['answer_id']);
             $table->index(['brand_id', 'is_you']);
+            $table->index('competitor_id');
         });
 
         Schema::create('answer_citations', function (Blueprint $table): void {

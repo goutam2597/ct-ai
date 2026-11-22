@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import PanelLayout from '../../Layouts/PanelLayout.vue';
+
+const page = usePage();
 
 const props = defineProps<{
     brand: { id: number; name: string; engines: string[]; runsPerPrompt: number; nextSweepAt: string | null };
@@ -29,7 +32,8 @@ const maxDaily = Math.max(...props.daily.map((d) => d.answers), 1);
 <template>
     <Head :title="brand.name" />
 
-    <main class="mx-auto max-w-6xl px-6 py-10">
+    <PanelLayout title="Brands">
+    <div class="mx-auto max-w-6xl px-6 py-10">
         <header class="flex flex-wrap items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-neutral-900 dark:text-neutral-50">{{ brand.name }}</h1>
@@ -139,5 +143,6 @@ const maxDaily = Math.max(...props.daily.map((d) => d.answers), 1);
                 <p class="mt-1 text-xs text-neutral-500">Collection pauses when the cap or allowance is reached.</p>
             </div>
         </section>
-    </main>
+        </div>
+</PanelLayout>
 </template>

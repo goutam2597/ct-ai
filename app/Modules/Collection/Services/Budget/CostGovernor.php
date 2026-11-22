@@ -3,7 +3,7 @@
 namespace App\Modules\Collection\Services\Budget;
 
 use App\Modules\Collection\Models\CostLedger;
-use Illuminate\Support\Carbon;
+use Carbon\CarbonInterface;
 
 /**
  * Install-wide daily spend cap (ADR-0004, level 1). Checked before every
@@ -17,7 +17,7 @@ final class CostGovernor
     }
 
     /** Spend recorded so far today, across the whole installation. */
-    public function spentToday(?Carbon $day = null): float
+    public function spentToday(?CarbonInterface $day = null): float
     {
         $day ??= now()->startOfDay();
 

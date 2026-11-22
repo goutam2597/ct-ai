@@ -23,6 +23,9 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Subscription|null $subscription
+ * @property-read User $owner
+ * @property-read int|null $brands_count
+ * @property-read int|null $memberships_count
  */
 class Workspace extends Model
 {

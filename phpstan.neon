@@ -5,10 +5,13 @@ parameters:
         - database
         - config
         - routes
-    excludePaths:
-        - app/Modules/*/Http/Controllers/*Controller.php
     ignoreErrors:
-        # Larastan collects controllers' authorize() magic; revisit when gates are typed.
+        # Laravel 13 dropped the forwarded-method @method annotations from
+        # Eloquent\Builder (limit/orderBy are now forwarded via __call), so
+        # Larastan resolves ->get() on those chains as Collection<int,stdClass>.
+        # Upstream fix pending (larastan + laravel/framework stubs); the
+        # runtime returns real models. Do NOT widen this pattern.
         -
-            message: '#(Call to an undefined method|Method App\\Modules\\Tenancy\\Http\\Controllers\\WorkspaceController::).*#'
-            path: app/Modules/Tenancy/Http/Controllers/WorkspaceController.php
+            message: '#Parameter \#1 \$callback of method Illuminate\\Support\\Collection<int,stdClass>::map\(\)#'
+            path: app
+

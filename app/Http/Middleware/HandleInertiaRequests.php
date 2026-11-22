@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Modules\Analytics\Models\AlertEvent;
 use App\Modules\Tenancy\Support\WorkspaceContext;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -60,6 +61,25 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
+            'panel' => function () use ($context): array {
+                $workspace = $context?->workspace();
+
+                if ($workspace === null) {
+                    return ['brands' => [], 'alerts' => []];
+                }
+
+                return [
+                    'brands' => $workspace->brands()->withoutGlobalScopes()
+                        ->orderBy('name')
+                        ->get(['id', 'name'])
+                        ->all(),
+                    'alerts' => AlertEvent::query()
+                        ->latest('id')
+                        ->limit(5)
+                        ->get(['id', 'rule', 'title', 'created_at'])
+                        ->all(),
+                ];
+            },
         ];
     }
 }

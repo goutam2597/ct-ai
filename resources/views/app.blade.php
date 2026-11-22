@@ -9,6 +9,21 @@
 
         <link rel="icon" href="/favicon.ico" sizes="any">
 
+        {{-- Pre-render theme init (mono-lms pattern): dark class + collapsed
+             sidebar land on <html> BEFORE first paint, so panels never flash. --}}
+        <script>
+            (function () {
+                try {
+                    if (localStorage.getItem('clot_theme_panel') === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    }
+                    if (localStorage.getItem('clot-sidebar-collapsed') === '1') {
+                        document.documentElement.classList.add('panel-sidebar-collapsed');
+                    }
+                } catch (e) {}
+            })();
+        </script>
+
         @vite(['resources/css/app.css', 'resources/js/app.ts'])
 
         @inertiaHead

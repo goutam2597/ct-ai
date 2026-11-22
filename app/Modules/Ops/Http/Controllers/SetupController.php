@@ -15,7 +15,7 @@ use Inertia\Response;
  */
 final class SetupController extends Controller
 {
-    public function index(InstallerService $installer): Response|RedirectResponse
+    public function index(InstallerService $installer): Response
     {
         if ($installer->isSealed()) {
             abort(404);

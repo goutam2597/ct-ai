@@ -13,6 +13,7 @@ use App\Modules\Collection\Models\AnswerCitation;
 use App\Modules\Collection\Models\AnswerDailyStat;
 use App\Modules\Collection\Models\AnswerMention;
 use App\Modules\Collection\Models\Brand;
+use App\Modules\Collection\Models\Competitor;
 use App\Modules\Collection\Models\CostLedger;
 use App\Modules\Collection\Models\Prompt;
 use App\Modules\Collection\Models\Sweep;
@@ -140,10 +141,13 @@ final class AnswerJob implements ShouldQueue
         );
 
         foreach ($scan->mentioned as $mention) {
+            // Your-mention rows point at the tracked brand; rival rows carry
+            // the competitor's own id — rival-pull-ahead alerts need identity.
             AnswerMention::withoutWorkspaceScope()->create([
                 'workspace_id' => $cell->workspace_id,
                 'answer_id' => $answer->id,
-                'brand_id' => $brand->id,
+                'brand_id' => $mention['isYou'] ? $brand->id : null,
+                'competitor_id' => $mention['brand'] instanceof Competitor ? $mention['brand']->id : null,
                 'position' => $mention['isYou'] ? $mention['position'] : null,
                 'tone' => $mention['tone'],
                 'matched_by' => $mention['matched_by'],

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Analytics\AnalyticsServiceProvider;
 use App\Modules\Billing\BillingServiceProvider;
 use App\Modules\Collection\CollectionServiceProvider;
 use App\Modules\Ops\OpsServiceProvider;
@@ -11,5 +12,6 @@ return [
     TenancyServiceProvider::class,
     CollectionServiceProvider::class,
     BillingServiceProvider::class,
+    AnalyticsServiceProvider::class,
     OpsServiceProvider::class,
 ];

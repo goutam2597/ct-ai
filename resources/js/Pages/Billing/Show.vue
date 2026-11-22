@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import PanelLayout from '../../Layouts/PanelLayout.vue';
+
+const page = usePage();
 
 const props = defineProps<{
     plans: Array<{
@@ -31,7 +34,8 @@ const fmt = (flags: Record<string, unknown>): string[] => {
 <template>
     <Head title="Plan and billing" />
 
-    <main class="mx-auto max-w-5xl px-6 py-10">
+    <PanelLayout title="Plan and billing">
+    <div class="mx-auto max-w-5xl px-6 py-10">
         <h1 class="text-2xl font-bold text-neutral-900 dark:text-neutral-50">Plan and billing</h1>
         <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
             Current: <strong>{{ current.plan ?? '—' }}</strong> · {{ current.allowance }} answers/mo ·
@@ -67,5 +71,6 @@ const fmt = (flags: Record<string, unknown>): string[] => {
                 </button>
             </div>
         </section>
-    </main>
+        </div>
+</PanelLayout>
 </template>

@@ -8,6 +8,7 @@ use App\Modules\Tenancy\Concerns\BelongsToWorkspace;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * One stored response. Failed collections keep their reason and are excluded
@@ -33,6 +34,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $output_tokens
  * @property list<string>|null $searches_run
  * @property list<string>|null $cited_links
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class Answer extends Model
 {

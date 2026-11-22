@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import PanelLayout from '../../Layouts/PanelLayout.vue';
+
+const page = usePage();
 
 const props = defineProps<{
     workspaces: Array<{
@@ -24,7 +27,8 @@ const switchTo = (id: number) => {
 <template>
     <Head title="Workspaces" />
 
-    <main class="mx-auto max-w-3xl px-6 py-12">
+    <PanelLayout title="Workspaces">
+    <div class="mx-auto max-w-3xl px-6 py-12">
         <h1 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">Your workspaces</h1>
         <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
             Everything you create lives inside one of them.
@@ -74,5 +78,6 @@ const switchTo = (id: number) => {
             </button>
         </form>
         <p v-if="form.errors.name" class="mt-2 text-sm text-red-600">{{ form.errors.name }}</p>
-    </main>
+        </div>
+</PanelLayout>
 </template>

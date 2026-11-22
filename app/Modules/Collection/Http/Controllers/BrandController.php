@@ -11,6 +11,7 @@ use App\Modules\Collection\Services\Budget\AllowanceService;
 use App\Modules\Collection\Services\Budget\CostGovernor;
 use App\Modules\Tenancy\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -111,6 +112,54 @@ class BrandController extends Controller
                 'monthUsd' => round($costThisMonth, 2),
                 'capUsd' => $governor->dailyCapUsd(),
             ],
+        ]);
+    }
+
+    public function answers(Request $request, Brand $brand): Response
+    {
+        Gate::authorize('view', $brand);
+
+        $filters = [
+            'engine' => (string) $request->string('engine'),
+            'status' => $request->input('status') === 'failed' ? 'failed' : ($request->input('status') === 'collected' ? 'collected' : ''),
+            'named' => $request->input('named') === '1' ? '1' : ($request->input('named') === '0' ? '0' : ''),
+        ];
+
+        $query = Answer::query()
+            ->where('brand_id', $brand->id)
+            ->with('prompt:id,text')
+            ->orderByDesc('id')
+            ->limit(200);
+
+        if ($filters['engine'] !== '') {
+            $query->where('engine', $filters['engine']);
+        }
+        if ($filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+        if ($filters['named'] !== '') {
+            $query->where('named_you', (bool) $filters['named']);
+        }
+
+        $rows = $query->get()->map(fn (Answer $answer) => [
+            'id' => $answer->id,
+            'status' => $answer->status->value,
+            'engine' => $answer->engine,
+            'method' => $answer->method,
+            'model' => $answer->model,
+            'named' => (bool) $answer->named_you,
+            'cited' => (bool) $answer->cited_you,
+            'text' => $answer->answer_text,
+            'failureReason' => $answer->failure_reason,
+            'costUsd' => $answer->provider_cost_usd,
+            'createdAt' => $answer->created_at?->toISOString(),
+            'prompt' => $answer->prompt->text ?? '',
+        ]);
+
+        return Inertia::render('Brands/Answers', [
+            'brand' => ['id' => $brand->id, 'name' => $brand->name],
+            'answers' => $rows,
+            'filters' => $filters,
         ]);
     }
 

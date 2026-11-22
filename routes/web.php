@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Modules\Analytics\Http\Controllers\AlertsController;
 use App\Modules\Billing\Http\Controllers\BillingController;
 use App\Modules\Billing\Http\Controllers\WebhookController;
 use App\Modules\Collection\Http\Controllers\BrandController;
@@ -52,7 +53,12 @@ Route::middleware(['auth', 'workspace.context'])->group(function (): void {
         ->name('workspaces.switch');
 
     Route::get('/brands/{brand}', [BrandController::class, 'show'])->name('brands.show');
+    Route::get('/brands/{brand}/answers', [BrandController::class, 'answers'])->name('brands.answers');
     Route::post('/brands/{brand}/sweep', [BrandController::class, 'runSweep'])->name('brands.sweep');
+
+    Route::get('/alerts', [AlertsController::class, 'index'])->name('alerts.index');
+    Route::post('/alerts/channels', [AlertsController::class, 'addChannel'])->name('alerts.channels.store');
+    Route::delete('/alerts/channels/{channel}', [AlertsController::class, 'removeChannel'])->name('alerts.channels.destroy');
 
     Route::get('/billing', [BillingController::class, 'show'])->name('billing.show');
     Route::post('/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');

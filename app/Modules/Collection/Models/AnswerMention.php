@@ -10,11 +10,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * A brand (the tracked brand or one of its competitors) named inside an answer.
+ * Your-mention rows point at the tracked brand; rival rows carry the
+ * competitor's own id — rival-pull-ahead alerts need identity.
  *
  * @property int $id
  * @property int $workspace_id
  * @property int $answer_id
- * @property int $brand_id
+ * @property int|null $brand_id
+ * @property int|null $competitor_id
  * @property int|null $position
  * @property Tone|null $tone
  * @property MatchedBy $matched_by
@@ -25,7 +28,7 @@ class AnswerMention extends Model
     use BelongsToWorkspace;
 
     protected $fillable = [
-        'workspace_id', 'answer_id', 'brand_id', 'position', 'tone', 'matched_by', 'is_you',
+        'workspace_id', 'answer_id', 'brand_id', 'competitor_id', 'position', 'tone', 'matched_by', 'is_you',
     ];
 
     protected function casts(): array
