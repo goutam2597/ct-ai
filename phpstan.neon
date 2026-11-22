@@ -1,0 +1,14 @@
+parameters:
+    level: 6
+    paths:
+        - app
+        - database
+        - config
+        - routes
+    excludePaths:
+        - app/Modules/*/Http/Controllers/*Controller.php
+    ignoreErrors:
+        # Larastan collects controllers' authorize() magic; revisit when gates are typed.
+        -
+            message: '#(Call to an undefined method|Method App\\Modules\\Tenancy\\Http\\Controllers\\WorkspaceController::).*#'
+            path: app/Modules/Tenancy/Http/Controllers/WorkspaceController.php

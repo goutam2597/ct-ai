@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/* Class-based dark mode (mono-lms pattern: toggled on <html>, persisted per panel). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    /* mono-lms panel typography: Inter, full weight range */
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/*
+ * Design tokens (mono-lms panel language).
+ * Operator-configurable brand palette is injected at runtime via --brand-* vars
+ * on :root (see layouts); the defaults below keep every surface readable
+ * before settings exist.
+ */
+:root {
+    --brand-primary: #344c3d;
+    --brand-primary-hover: #25372c;
+    --brand-accent: #738a6e;
+    --brand-bg: #f4f6f9;
+    --brand-dark: #08131e;
+
+    /* Panel sidebar geometry (mono_market pattern) */
+    --panel-sidebar-width: 16rem;
+    --panel-sidebar-collapsed: 5rem;
+}
+
+html {
+    &.dark {
+        --brand-bg: #000000;
+    }
+}
+
+/* Thin translucent scrollbar used inside dark sidebars. */
+.sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 0.12) transparent;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgb(255 255 255 / 0.12);
+        border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: rgb(255 255 255 / 0.24);
+    }
+}
+
+/* Collapsed sidebar: sidebar shrinks, main content padding follows (RTL aware). */
+html.panel-sidebar-collapsed {
+    --panel-sidebar-width: var(--panel-sidebar-collapsed);
+}

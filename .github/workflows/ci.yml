@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4']
+    name: Pest + PHPStan + Pint (PHP ${{ matrix.php }})
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare environment
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php artisan key:generate --force
+
+      - name: Run test suite
+        run: php artisan test
+
+      - name: Run PHPStan (Larastan)
+        run: vendor/bin/phpstan analyse --no-progress --no-interaction
+
+      - name: Run Pint style check
+        run: vendor/bin/pint --test
+
+  frontend:
+    runs-on: ubuntu-latest
+    name: Frontend build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build front end
+        run: npm run build
+
+  package-hygiene:
+    runs-on: ubuntu-latest
+    name: Package hygiene (Mono Market gate 2.9)
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: No author machine paths in source
+        run: |
+          if grep -rEn "/Users/[a-z]+/|C:\\\\Users\\\\|D:\\\\installation" app config database routes resources tests bootstrap --include='*.php' --include='*.ts' --include='*.vue' --include='*.json'; then
+            echo "::error::Local machine paths leaked into source"
+            exit 1
+          fi
+
+      - name: No committed secrets
+        run: |
+          if grep -rEn "sk-[a-zA-Z0-9]{20,}|AKIA[0-9A-Z]{16}|BEGIN (RSA|OPENSSH) PRIVATE KEY" app config database routes resources bootstrap; then
+            echo "::error::Possible secret committed"
+            exit 1
+          fi
+
+      - name: No telemetry / phone-home
+        run: |
+          if grep -rEn "phone-home|license.*phone|telemetry" app config --include='*.php'; then
+            echo "::error::Telemetry detected"
+            exit 1
+          fi
