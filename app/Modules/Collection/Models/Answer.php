@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property int $sweep_cell_id
  * @property int $brand_id
  * @property int $prompt_id
+ * @property-read Prompt|null $prompt
  * @property string $engine
  * @property string $method
  * @property string|null $model

@@ -11,6 +11,7 @@ return [
     AppServiceProvider::class,
     TenancyServiceProvider::class,
     CollectionServiceProvider::class,
+    ApiPlatformServiceProvider::class,
     BillingServiceProvider::class,
     AnalyticsServiceProvider::class,
     OpsServiceProvider::class,

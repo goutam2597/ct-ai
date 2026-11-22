@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Modules\Analytics\Http\Controllers\AlertsController;
+use App\Modules\ApiPlatform\Http\Controllers\ApiKeysController;
 use App\Modules\Billing\Http\Controllers\BillingController;
 use App\Modules\Billing\Http\Controllers\WebhookController;
 use App\Modules\Collection\Http\Controllers\BrandController;
@@ -95,6 +96,10 @@ Route::middleware(['auth', 'verified', 'workspace.context'])->group(function ():
     Route::get('/alerts', [AlertsController::class, 'index'])->name('alerts.index');
     Route::post('/alerts/channels', [AlertsController::class, 'addChannel'])->name('alerts.channels.store');
     Route::delete('/alerts/channels/{channel}', [AlertsController::class, 'removeChannel'])->name('alerts.channels.destroy');
+
+    Route::get('/api-keys', [ApiKeysController::class, 'index'])->name('api-keys.index');
+    Route::post('/api-keys', [ApiKeysController::class, 'store'])->name('api-keys.store');
+    Route::delete('/api-keys/{apiKey}', [ApiKeysController::class, 'destroy'])->name('api-keys.destroy');
 
     Route::get('/billing', [BillingController::class, 'show'])->name('billing.show');
     Route::post('/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');
