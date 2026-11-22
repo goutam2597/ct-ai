@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #1f2937; margin: 32px; }
+        h1 { font-size: 22px; margin: 0; color: #111827; }
+        h2 { font-size: 15px; margin: 24px 0 8px; color: #111827; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; }
+        .meta { color: #6b7280; font-size: 10px; margin-top: 4px; }
+        .label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-bottom: 2px; }
+        .cards { width: 100%; margin-top: 16px; }
+        .card { display: inline-block; width: 22%; margin-right: 2%; background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px; vertical-align: top; }
+        .big { font-size: 20px; font-weight: bold; color: #111827; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+        th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; border-bottom: 1px solid #e5e7eb; padding: 6px 4px; }
+        td { padding: 6px 4px; border-bottom: 1px solid #f3f4f6; }
+        .footer { margin-top: 32px; font-size: 9px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 8px; }
+        .warn { background: #fef3c7; border: 1px solid #f59e0b; padding: 8px; margin-top: 12px; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <h1>{{ $label['name'] }} — AI visibility report</h1>
+    <div class="meta">
+        {{ $brand['name'] }} · last {{ $periodDays }} days · generated {{ date('Y-m-d H:i') }}
+    </div>
+
+    @if($metrics['lowConfidence'])
+        <div class="warn">Low confidence: fewer than 30 answers in this period. Rates are shown but not used to call trends.</div>
+    @endif
+
+    <div class="cards">
+        <div class="card">
+            <div class="label">Mention rate</div>
+            <div class="big">{{ $metrics['mentionRate']['point'] === null ? '—' : round($metrics['mentionRate']['point'] * 100).'%' }}</div>
+            <div class="meta">95% range {{ $metrics['mentionRate']['low'] === null ? '—' : round($metrics['mentionRate']['low'] * 100).'%' }} – {{ $metrics['mentionRate']['high'] === null ? '—' : round($metrics['mentionRate']['high'] * 100).'%' }}</div>
+        </div>
+        <div class="card">
+            <div class="label">Share of voice</div>
+            <div class="big">{{ $metrics['shareOfVoice'] === null ? '—' : $metrics['shareOfVoice'].'%' }}</div>
+            <div class="meta">of all tracked-brand mentions</div>
+        </div>
+        <div class="card">
+            <div class="label">Citation rate</div>
+            <div class="big">{{ $metrics['citationRate']['point'] === null ? '—' : round($metrics['citationRate']['point'] * 100).'%' }}</div>
+            <div class="meta">95% range {{ $metrics['citationRate']['low'] === null ? '—' : round($metrics['citationRate']['low'] * 100).'%' }} – {{ $metrics['citationRate']['high'] === null ? '—' : round($metrics['citationRate']['high'] * 100).'%' }}</div>
+        </div>
+        <div class="card">
+            <div class="label">Answers</div>
+            <div class="big">{{ $metrics['answersCollected'] }}</div>
+            <div class="meta">collected in this period</div>
+        </div>
+    </div>
+
+    @if(count($engines))
+        <h2>By engine</h2>
+        <table>
+            <tr><th>Engine</th><th>Rate</th><th>95% range</th><th>Answers</th></tr>
+            @foreach($engines as $engine)
+                <tr>
+                    <td>{{ $engine['engine'] }}</td>
+                    <td>{{ $engine['rate'] === null ? '—' : round($engine['rate'] * 100).'%' }}</td>
+                    <td>{{ $engine['low'] === null ? '—' : round($engine['low'] * 100).'%' }} – {{ $engine['high'] === null ? '—' : round($engine['high'] * 100).'%' }}</td>
+                    <td>{{ $engine['answers'] }}</td>
+                </tr>
+            @endforeach
+        </table>
+    @endif
+
+    @if(count($competitors))
+        <h2>Competitors</h2>
+        <table>
+            <tr><th>Brand</th><th>Named in</th></tr>
+            @foreach($competitors as $competitor)
+                <tr><td>{{ $competitor['name'] }}</td><td>{{ $competitor['mentionRate'] }}% of answers</td></tr>
+            @endforeach
+        </table>
+    @endif
+
+    @if(count($sources))
+        <h2>Sources the engines cite</h2>
+        <table>
+            <tr><th>Domain</th><th>Owner</th><th>Citations</th></tr>
+            @foreach($sources as $source)
+                <tr>
+                    <td>{{ $source['domain'] }}</td>
+                    <td>{{ $source['ownerType'] }}</td>
+                    <td>{{ $source['citations'] }}</td>
+                </tr>
+            @endforeach
+        </table>
+    @endif
+
+    <div class="footer">
+        Every rate carries its 95% Wilson interval. A trend is real only when two periods' ranges do not
+        overlap. {{ $label['whiteLabel'] ? 'Prepared by '.$label['name'].' via ' : 'Generated by ' }}{{ config('app.name') }}.
+    </div>
+</body>
+</html>

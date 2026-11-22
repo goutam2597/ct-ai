@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ in_array(app()->getLocale(), ['ar', 'he', 'fa', 'ur']) ? 'rtl' : 'ltr' }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <title inertia>{{ config('app.name', 'CLOT') }}</title>
+
+        <link rel="icon" href="/favicon.ico" sizes="any">
+
+        {{-- Pre-render theme init (mono-lms pattern): dark class + collapsed
+             sidebar land on <html> BEFORE first paint, so panels never flash. --}}
+        <script>
+            (function () {
+                try {
+                    if (localStorage.getItem('clot_theme_panel') === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    }
+                    if (localStorage.getItem('clot-sidebar-collapsed') === '1') {
+                        document.documentElement.classList.add('panel-sidebar-collapsed');
+                    }
+                } catch (e) {}
+            })();
+        </script>
+
+        @vite(['resources/css/app.css', 'resources/js/app.ts'])
+
+        @inertiaHead
+    </head>
+    <body class="font-sans antialiased">
+        @inertia
+    </body>
+</html>
