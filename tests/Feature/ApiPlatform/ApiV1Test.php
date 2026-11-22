@@ -13,52 +13,11 @@ use App\Modules\Tenancy\Models\Membership;
 use App\Modules\Tenancy\Models\Workspace;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Testing\TestResponse;
 
 /**
  * REST API v1 (build plan §6.1 API row): bearer keys act as their creator,
  * foreign brands 404, roles gate the write endpoint, rates carry ranges.
  */
-function makeApiKey(User $user, Workspace $workspace): string
-{
-    $plaintext = 'vg_'.Str::random(40);
-
-    ApiKey::query()->create([
-        'workspace_id' => $workspace->id,
-        'created_by' => $user->id,
-        'name' => 'Test key',
-        'token_hash' => ApiKey::hashToken($plaintext),
-    ]);
-
-    return $plaintext;
-}
-
-function apiGet(string $token, string $url): TestResponse
-{
-    $response = app(Kernel::class)->handle(
-        Request::create($url, 'GET', [], [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'HTTP_ACCEPT' => 'application/json',
-        ]),
-    );
-
-    return TestResponse::fromBaseResponse($response);
-}
-
-function apiPost(string $token, string $url, array $body): TestResponse
-{
-    $response = app(Kernel::class)->handle(
-        Request::create($url, 'POST', [], [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'HTTP_ACCEPT' => 'application/json',
-            'CONTENT_TYPE' => 'application/json',
-        ], json_encode($body)),
-    );
-
-    return TestResponse::fromBaseResponse($response);
-}
-
 it('rejects missing, malformed and invalid keys', function (): void {
     $this->get('/api/v1/brands')->assertStatus(401);
 

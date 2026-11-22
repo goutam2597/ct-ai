@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Modules\Analytics\Http\Controllers\AlertsController;
 use App\Modules\ApiPlatform\Http\Controllers\ApiKeysController;
+use App\Modules\ApiPlatform\Http\Controllers\McpController;
+use App\Modules\ApiPlatform\Http\Middleware\AuthenticateApiKey;
 use App\Modules\Billing\Http\Controllers\BillingController;
 use App\Modules\Billing\Http\Controllers\WebhookController;
 use App\Modules\Collection\Http\Controllers\BrandController;
@@ -114,6 +116,12 @@ Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')
     Route::get('/billing', [BillingKeysController::class, 'index'])->name('billing');
     Route::post('/billing/keys', [BillingKeysController::class, 'save'])->name('billing.keys');
 });
+
+// MCP server: JSON-RPC 2.0 over the same Bearer-key auth, CSRF-exempt.
+Route::withoutMiddleware([VerifyCsrfToken::class])
+    ->post('/mcp/visibility', [McpController::class, 'handle'])
+    ->middleware([AuthenticateApiKey::class])
+    ->name('mcp.visibility');
 
 // Public share links (no auth; token is the credential).
 Route::get('/reports/{token}', [SharedReportController::class, 'show'])

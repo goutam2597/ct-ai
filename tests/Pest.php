@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Modules\ApiPlatform\Models\ApiKey;
 use App\Modules\Billing\Models\Plan;
 use App\Modules\Billing\Services\BillingService;
 use App\Modules\Tenancy\Models\Membership;
@@ -9,7 +10,11 @@ use App\Modules\Tenancy\Support\WorkspaceContext;
 use Database\Factories\Modules\Collection\Models\BrandFactory;
 use Database\Factories\Modules\Collection\Models\CompetitorFactory;
 use Database\Factories\Modules\Collection\Models\PromptFactory;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 pest()->extend(TestCase::class)
@@ -103,4 +108,45 @@ function makeTrackingBrand(
     }
 
     return [$owner, $workspace, $brand, $competitors];
+}
+
+// ---- API test helpers (shared between ApiV1Test, McpServerTest, StripeGatewayTest) ----
+
+function makeApiKey(User $user, Workspace $workspace): string
+{
+    $plaintext = 'vg_'.Str::random(40);
+
+    ApiKey::query()->create([
+        'workspace_id' => $workspace->id,
+        'created_by' => $user->id,
+        'name' => 'Test key',
+        'token_hash' => ApiKey::hashToken($plaintext),
+    ]);
+
+    return $plaintext;
+}
+
+function apiGet(string $token, string $url): TestResponse
+{
+    $response = app(Kernel::class)->handle(
+        Request::create($url, 'GET', [], [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'HTTP_ACCEPT' => 'application/json',
+        ]),
+    );
+
+    return TestResponse::fromBaseResponse($response);
+}
+
+function apiPost(string $token, string $url, array $body): TestResponse
+{
+    $response = app(Kernel::class)->handle(
+        Request::create($url, 'POST', [], [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode($body)),
+    );
+
+    return TestResponse::fromBaseResponse($response);
 }
