@@ -49,7 +49,8 @@ const maxDaily = Math.max(...props.daily.map((d) => d.answers), 1);
             >
                 Run sweep now
             </button>
-        </header>
+                        <Link :href="`/brands/${brand.id}/opportunities`" class="text-sm text-neutral-500 underline">Opportunities</Link>
+            </header>
 
         <p v-if="metrics.lowConfidence" class="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300">
             Low confidence: fewer than 30 answers in this period. Shown, but not used to call a trend.
