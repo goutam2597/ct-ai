@@ -92,7 +92,7 @@ Route::middleware(['auth', 'verified', 'workspace.context'])->group(function ():
         ->name('brands.report');
     Route::get('/brands/{brand}/content-briefs', [ContentBriefController::class, 'index'])->name('brands.content-briefs');
     Route::get('/brands/{brand}/opportunities', [OpportunityController::class, 'index'])->name('brands.opportunities');
-    Route::post('/brands/{brand}/site-check', [SiteCheckController::class, 'run'])->name('brands.site-check.run');
+    Route::get('/brands/{brand}/site-check', [SiteCheckController::class, 'run'])->name('brands.site-check');
     Route::get('/brands/{brand}/share-links', [ReportController::class, 'shareLinks'])
         ->name('brands.share-links');
     Route::post('/brands/{brand}/share-links', [ReportController::class, 'createShareLink'])

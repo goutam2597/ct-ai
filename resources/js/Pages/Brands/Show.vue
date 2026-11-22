@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import PanelLayout from '../../Layouts/PanelLayout.vue';
+import BrandTabs from './BrandTabs.vue';
 
 const page = usePage();
 
@@ -33,6 +34,7 @@ const maxDaily = Math.max(...props.daily.map((d) => d.answers), 1);
     <Head :title="brand.name" />
 
     <PanelLayout title="Brands">
+        <BrandTabs :brand="props.brand" active="overview" />
     <div class="mx-auto max-w-6xl px-6 py-10">
         <header class="flex flex-wrap items-center justify-between gap-4">
             <div>

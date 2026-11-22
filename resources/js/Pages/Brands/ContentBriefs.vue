@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
 import PanelLayout from '../../Layouts/PanelLayout.vue';
+import BrandTabs from './BrandTabs.vue';
 
 const page = usePage<{
     app: { name: string };
@@ -28,6 +29,7 @@ const pct = (v: number | null) => v === null ? '—' : Math.round(v * 100) + '%'
     <Head :title="`Content briefs — ${props.brand.name}`" />
 
     <PanelLayout :title="`Content briefs — ${props.brand.name}`">
+        <BrandTabs :brand="props.brand" active="briefs" />
         <div class="mx-auto max-w-4xl px-6 py-8">
             <h1 class="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
                 Content briefs · {{ props.brand.name }}

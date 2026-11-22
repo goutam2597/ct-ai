@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import PanelLayout from '../../Layouts/PanelLayout.vue';
+import BrandTabs from './BrandTabs.vue';
 
 const page = usePage<{
     app: { name: string };
@@ -38,6 +39,7 @@ const fmtCost = (cost: string | null): string =>
     <Head :title="`${brand.name} — answers`" />
 
     <PanelLayout :title="`${brand.name} — answers`">
+        <BrandTabs :brand="props.brand" active="answers" />
         <div class="mx-auto max-w-5xl px-6 py-8">
             <div class="flex items-center justify-between">
                 <div>
