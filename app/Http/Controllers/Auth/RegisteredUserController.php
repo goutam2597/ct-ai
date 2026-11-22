@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Tenancy\Services\WorkspaceCreator;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +15,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Self-serve sign-up: user + default workspace (free plan) in one go.
- * Email verification lands with the mail sprint; sign-up is rate limited.
+ * Self-serve sign-up: user + default workspace (free plan) in one go, then
+ * straight into email verification. Sign-up is rate limited.
  */
 final class RegisteredUserController extends Controller
 {
@@ -53,9 +54,12 @@ final class RegisteredUserController extends Controller
 
         $workspaces->create($user->id, $validated['workspace'] ?? $validated['name']."'s workspace");
 
+        // Fires SendEmailVerificationNotification (framework default listener).
+        event(new Registered($user));
+
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('workspaces.index');
+        return redirect()->route('verification.notice');
     }
 }

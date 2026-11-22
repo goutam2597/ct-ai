@@ -3,6 +3,7 @@
 namespace App\Modules\Analytics;
 
 use App\Modules\Analytics\Console\AlertsEvaluateCommand;
+use App\Modules\Analytics\Console\DigestSendCommand;
 use Illuminate\Support\ServiceProvider;
 
 final class AnalyticsServiceProvider extends ServiceProvider
@@ -16,6 +17,7 @@ final class AnalyticsServiceProvider extends ServiceProvider
     {
         $this->commands([
             AlertsEvaluateCommand::class,
+            DigestSendCommand::class,
         ]);
     }
 }

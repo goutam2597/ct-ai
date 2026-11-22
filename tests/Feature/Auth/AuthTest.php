@@ -12,7 +12,7 @@ it('registers a user with a default workspace on the free plan', function (): vo
         'workspace' => 'Nora HQ',
     ]);
 
-    $response->assertRedirect(route('workspaces.index'));
+    $response->assertRedirect(route('verification.notice'));
 
     $user = User::query()->where('email', 'nora@buyer.test')->firstOrFail();
     $workspace = Workspace::query()->where('name', 'Nora HQ')->firstOrFail();

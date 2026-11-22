@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Billing\Gateways\FakeGateway;
+use App\Modules\Billing\Gateways\StripeGateway;
 
 /**
  * Billing configuration. The active gateway is ONE setting (build plan §7);
@@ -19,6 +20,12 @@ return [
             'label' => 'Offline (demo)',
             'class' => FakeGateway::class,
             'webhook_secret' => env('CLOT_FAKE_WEBHOOK_SECRET', 'fake-secret'),
+        ],
+        'stripe' => [
+            'label' => 'Stripe',
+            'class' => StripeGateway::class,
+            'secret_key' => env('STRIPE_SECRET_KEY'),
+            'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
         ],
     ],
 

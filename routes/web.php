@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Modules\Analytics\Http\Controllers\AlertsController;
 use App\Modules\Billing\Http\Controllers\BillingController;
@@ -29,11 +31,34 @@ Route::middleware('guest')->group(function (): void {
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
+
+    Route::get('/forgot-password', [PasswordResetController::class, 'requestForm'])
+        ->name('password.request');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'resetForm'])
+        ->name('password.reset');
 });
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
+
+// Password reset + email verification (framework notification contracts).
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])
+    ->middleware('guest')
+    ->name('password.email');
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])
+    ->middleware('guest')
+    ->name('password.update');
+
+Route::get('/verify-email', [EmailVerificationController::class, 'prompt'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.notice');
+Route::get('/verify-email/{id}/{hash}', [EmailVerificationController::class, 'confirm'])
+    ->middleware(['auth', 'signed', 'throttle:6,1'])
+    ->name('verification.verify');
+Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
 
 // Browser installer (Mono Market gate 2.2). Sealed = 404 on every route.
 Route::get('/setup', [SetupController::class, 'index'])->name('setup.index');
@@ -46,7 +71,7 @@ Route::withoutMiddleware([VerifyCsrfToken::class])
     ->post('/webhooks/billing/{provider}', WebhookController::class)
     ->name('billing.webhook');
 
-Route::middleware(['auth', 'workspace.context'])->group(function (): void {
+Route::middleware(['auth', 'verified', 'workspace.context'])->group(function (): void {
     Route::get('/workspaces', [WorkspaceController::class, 'index'])->name('workspaces.index');
     Route::post('/workspaces', [WorkspaceController::class, 'store'])->name('workspaces.store');
     Route::post('/workspaces/{workspace}/switch', [WorkspaceController::class, 'switch'])
