@@ -13,6 +13,7 @@ use App\Modules\Billing\Http\Controllers\WebhookController;
 use App\Modules\Collection\Http\Controllers\BrandController;
 use App\Modules\Collection\Http\Controllers\OpportunityController;
 use App\Modules\Collection\Http\Controllers\ReportController;
+use App\Modules\Collection\Http\Controllers\SiteCheckController;
 use App\Modules\Ops\Http\Controllers\Admin\BillingKeysController;
 use App\Modules\Ops\Http\Controllers\Admin\DashboardController;
 use App\Modules\Ops\Http\Controllers\Admin\EnginesController;
@@ -89,6 +90,7 @@ Route::middleware(['auth', 'verified', 'workspace.context'])->group(function ():
     Route::get('/brands/{brand}/report', [ReportController::class, 'pdf'])
         ->name('brands.report');
     Route::get('/brands/{brand}/opportunities', [OpportunityController::class, 'index'])->name('brands.opportunities');
+    Route::post('/brands/{brand}/site-check', [SiteCheckController::class, 'run'])->name('brands.site-check.run');
     Route::get('/brands/{brand}/share-links', [ReportController::class, 'shareLinks'])
         ->name('brands.share-links');
     Route::post('/brands/{brand}/share-links', [ReportController::class, 'createShareLink'])
