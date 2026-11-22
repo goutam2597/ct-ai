@@ -1,7 +1,8 @@
 <?php
 
 use App\Models\User;
-use App\Modules\Tenancy\Enums\WorkspaceRole;
+use App\Modules\Billing\Models\Plan;
+use App\Modules\Billing\Services\BillingService;
 use App\Modules\Tenancy\Models\Membership;
 use App\Modules\Tenancy\Models\Workspace;
 use App\Modules\Tenancy\Support\WorkspaceContext;
@@ -31,18 +32,35 @@ function actAsWorkspaceMember(User $user, Workspace $workspace): Membership
     return $membership;
 }
 
-/** Create a workspace + owner membership and return both. */
+/** Create a workspace via the sanctioned path (owner + plan) and return both. */
 function makeWorkspaceWithOwner(string $name = 'Acme'): array
 {
     $owner = User::factory()->create();
-    $workspace = Workspace::factory()->create(['owner_id' => $owner->id, 'name' => $name]);
-    Membership::factory()->owner()->create([
-        'workspace_id' => $workspace->id,
-        'user_id' => $owner->id,
-        'role' => WorkspaceRole::Owner,
-    ]);
+    $workspace = Workspace::createWithOwner($owner->id, $name);
 
     return [$owner, $workspace];
+}
+
+/** Create or update a test plan and activate it on a workspace. */
+function activatePlanWithAllowance(Workspace $workspace, int $answersPerMonth, ?array $engines = null): Plan
+{
+    $plan = Plan::query()->updateOrCreate(
+        ['slug' => 'test-plan-'.$answersPerMonth],
+        [
+            'name' => 'Test plan ('.$answersPerMonth.')',
+            'feature_flags' => array_merge(
+                Plan::defaultFlags(),
+                ['answers_per_month' => $answersPerMonth],
+                $engines !== null ? ['engines' => $engines] : [],
+            ),
+            'prices' => ['USD' => ['month' => 0, 'year' => 0]],
+            'is_default' => false,
+        ],
+    );
+
+    app(BillingService::class)->activate($workspace, $plan, 'fake');
+
+    return $plan;
 }
 
 /**

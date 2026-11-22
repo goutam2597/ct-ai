@@ -3,6 +3,7 @@
 namespace App\Modules\Tenancy\Services;
 
 use App\Models\User;
+use App\Modules\Billing\Services\BillingService;
 use App\Modules\Tenancy\Enums\BrandAccess;
 use App\Modules\Tenancy\Enums\WorkspaceRole;
 use App\Modules\Tenancy\Models\Membership;
@@ -38,6 +39,9 @@ final class WorkspaceCreator
 
             return $workspace;
         });
+
+        // Every workspace lands on the default (free) plan immediately.
+        app(BillingService::class)->attachDefaultPlan($workspace);
 
         return $workspace->refresh();
     }

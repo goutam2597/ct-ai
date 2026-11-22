@@ -1,10 +1,11 @@
 <?php
 
+use App\Modules\Billing\Services\PlanFeatures;
 use App\Modules\Collection\Services\Budget\AllowanceService;
 
 it('claims answers from the allowance and stops at zero', function (): void {
     [$owner, $workspace] = makeWorkspaceWithOwner();
-    $workspace->forceFill(['settings' => ['answers_per_month' => 3]])->save();
+    activatePlanWithAllowance($workspace, 3);
 
     actAsWorkspaceMember($owner, $workspace);
     $allowance = app(AllowanceService::class);
@@ -19,7 +20,7 @@ it('claims answers from the allowance and stops at zero', function (): void {
 
 it('never double-claims the same cell (safe retries)', function (): void {
     [$owner, $workspace] = makeWorkspaceWithOwner();
-    $workspace->forceFill(['settings' => ['answers_per_month' => 1]])->save();
+    activatePlanWithAllowance($workspace, 1);
 
     actAsWorkspaceMember($owner, $workspace);
     $allowance = app(AllowanceService::class);
@@ -34,7 +35,7 @@ it('never double-claims the same cell (safe retries)', function (): void {
 
 it('refunds claims for failed collections', function (): void {
     [$owner, $workspace] = makeWorkspaceWithOwner();
-    $workspace->forceFill(['settings' => ['answers_per_month' => 2]])->save();
+    activatePlanWithAllowance($workspace, 2);
 
     actAsWorkspaceMember($owner, $workspace);
     $allowance = app(AllowanceService::class);
@@ -49,10 +50,10 @@ it('refunds claims for failed collections', function (): void {
         ->and($allowance->claim('cell-c')['claimed'])->toBeTrue();
 });
 
-it('falls back to the default allowance when the workspace has none', function (): void {
+it('falls back to the default plan allowance when no plan is attached', function (): void {
     [, $workspace] = makeWorkspaceWithOwner();
     actAsWorkspaceMember($workspace->owner, $workspace);
 
     expect(app(AllowanceService::class)->allowance())
-        ->toBe(config('clot-collection.default_answers_per_month'));
+        ->toBe(app(PlanFeatures::class)->allowance($workspace));
 });

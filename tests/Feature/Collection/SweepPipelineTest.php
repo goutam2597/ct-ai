@@ -99,7 +99,7 @@ it('stores failed answers with their reason, refunds the claim, and excludes the
 
 it('stops collecting when the workspace allowance runs out', function (): void {
     [$owner, $workspace, $brand] = makeTrackingBrand(runsPerPrompt: 3);
-    $workspace->forceFill(['settings' => ['answers_per_month' => 5]])->save();
+    activatePlanWithAllowance($workspace, 5);
 
     $sweep = app(SweepRunner::class)->runForBrand($brand);
 

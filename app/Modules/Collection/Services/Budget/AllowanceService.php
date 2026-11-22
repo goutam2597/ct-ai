@@ -2,6 +2,7 @@
 
 namespace App\Modules\Collection\Services\Budget;
 
+use App\Modules\Billing\Services\PlanFeatures;
 use App\Modules\Collection\Models\AllowanceLedger;
 use App\Modules\Tenancy\Models\Workspace;
 use App\Modules\Tenancy\Support\WorkspaceContext;
@@ -34,7 +35,7 @@ final class AllowanceService
             ->sum('delta') * -1;
     }
 
-    /** Monthly allowance for a workspace (plan-based in Phase 2; setting until then). */
+    /** Monthly allowance for a workspace: driven by its plan (ADR-0004). */
     public function allowance(?int $workspaceId = null): int
     {
         $workspaceId ??= WorkspaceContext::currentId();
@@ -46,7 +47,7 @@ final class AllowanceService
         /** @var Workspace|null $workspace */
         $workspace = Workspace::query()->find($workspaceId);
 
-        return (int) ($workspace?->settings['answers_per_month'] ?? config('clot-collection.default_answers_per_month', 150));
+        return (int) app(PlanFeatures::class)->allowance($workspace);
     }
 
     public function remaining(?int $workspaceId = null): int
