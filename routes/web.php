@@ -11,6 +11,7 @@ use App\Modules\ApiPlatform\Http\Middleware\AuthenticateApiKey;
 use App\Modules\Billing\Http\Controllers\BillingController;
 use App\Modules\Billing\Http\Controllers\WebhookController;
 use App\Modules\Collection\Http\Controllers\BrandController;
+use App\Modules\Collection\Http\Controllers\BrandTabController;
 use App\Modules\Collection\Http\Controllers\ContentBriefController;
 use App\Modules\Collection\Http\Controllers\OpportunityController;
 use App\Modules\Collection\Http\Controllers\ReportController;
@@ -100,6 +101,10 @@ Route::middleware(['auth', 'verified', 'workspace.context'])->group(function ():
     Route::delete('/brands/{brand}/share-links/{shareLink}', [ReportController::class, 'revokeShareLink'])
         ->name('brands.share-links.destroy');
     Route::post('/brands/{brand}/sweep', [BrandController::class, 'runSweep'])->name('brands.sweep');
+
+    Route::get('/brands/{brand}/competitors', [BrandTabController::class, 'competitors'])->name('brands.competitors');
+    Route::get('/brands/{brand}/sources', [BrandTabController::class, 'sources'])->name('brands.sources');
+    Route::get('/brands/{brand}/perception', [BrandTabController::class, 'perception'])->name('brands.perception');
 
     Route::get('/alerts', [AlertsController::class, 'index'])->name('alerts.index');
     Route::post('/alerts/channels', [AlertsController::class, 'addChannel'])->name('alerts.channels.store');

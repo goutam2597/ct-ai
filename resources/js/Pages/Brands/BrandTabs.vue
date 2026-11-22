@@ -9,8 +9,10 @@ const props = defineProps<{
 const tabs = [
     { key: 'overview', label: 'Overview', path: '' },
     { key: 'answers', label: 'Answers', path: '/answers' },
+    { key: 'competitors', label: 'Competitors', path: '/competitors' },
     { key: 'opportunities', label: 'Opportunities', path: '/opportunities' },
     { key: 'briefs', label: 'Content briefs', path: '/content-briefs' },
+    { key: 'perception', label: 'Perception', path: '/perception' },
     { key: 'site-check', label: 'Site check', path: '/site-check' },
     { key: 'share-links', label: 'Share links', path: '/share-links' },
 ];
