@@ -55,6 +55,7 @@ class HandleInertiaRequests extends Middleware
                 'name' => config('app.name'),
                 'locale' => app()->getLocale(),
             ],
+            'csrf_token' => fn () => csrf_token(),
             'flash' => fn () => [
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),

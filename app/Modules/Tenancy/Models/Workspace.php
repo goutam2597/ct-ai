@@ -3,12 +3,15 @@
 namespace App\Modules\Tenancy\Models;
 
 use App\Models\User;
+use App\Modules\Billing\Models\Subscription;
+use App\Modules\Collection\Models\Brand;
 use App\Modules\Tenancy\Services\WorkspaceCreator;
 use Database\Factories\Modules\Tenancy\Models\WorkspaceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -19,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property array<string, mixed>|null $settings
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Subscription|null $subscription
  */
 class Workspace extends Model
 {
@@ -46,10 +50,22 @@ class Workspace extends Model
         return $this->hasMany(Team::class);
     }
 
+    /** @return HasMany<Brand, $this> */
+    public function brands(): HasMany
+    {
+        return $this->hasMany(Brand::class);
+    }
+
     /** @return BelongsTo<User, $this> */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    /** @return HasOne<Subscription, $this> */
+    public function subscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class);
     }
 
     /**

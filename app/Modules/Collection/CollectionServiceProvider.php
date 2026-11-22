@@ -2,6 +2,7 @@
 
 namespace App\Modules\Collection;
 
+use App\Modules\Collection\Console\DemoCommand;
 use App\Modules\Collection\Console\SweepDueCommand;
 use App\Modules\Collection\Contracts\Collector;
 use App\Modules\Collection\Models\Brand;
@@ -31,6 +32,7 @@ final class CollectionServiceProvider extends ServiceProvider
 
         $this->commands([
             SweepDueCommand::class,
+            DemoCommand::class,
         ]);
     }
 }
