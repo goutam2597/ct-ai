@@ -14,6 +14,25 @@ use App\Modules\Collection\Collectors\FakeCollector;
  * real collectors; no code change required.
  */
 return [
+    // Cost governance (ADR-0004). Installation-wide daily spend cap in USD.
+    'daily_cap_usd' => (float) env('CLOT_DAILY_CAP_USD', 25.0),
+
+    // Workspace monthly answer allowance until plans exist (Phase 2).
+    'default_answers_per_month' => (int) env('CLOT_DEFAULT_ANSWERS_PER_MONTH', 150),
+
+    // Rough pre-call estimate per engine, used for cap checks before spend.
+    'estimated_cost_per_answer' => [
+        'chatgpt' => 0.01,
+        'gemini' => 0.01,
+        'google-ai-overviews' => 0.005,
+        'google-ai-mode' => 0.005,
+        'claude' => 0.01,
+        'perplexity' => 0.005,
+        'grok' => 0.01,
+        'deepseek' => 0.005,
+        'le-chat' => 0.005,
+    ],
+
     'engines' => [
         'chatgpt' => [
             'label' => 'ChatGPT',

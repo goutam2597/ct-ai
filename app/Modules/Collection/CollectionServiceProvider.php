@@ -2,8 +2,12 @@
 
 namespace App\Modules\Collection;
 
+use App\Modules\Collection\Console\SweepDueCommand;
 use App\Modules\Collection\Contracts\Collector;
+use App\Modules\Collection\Models\Brand;
+use App\Modules\Collection\Policies\BrandPolicy;
 use App\Modules\Collection\Services\CollectorManager;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 final class CollectionServiceProvider extends ServiceProvider
@@ -23,6 +27,10 @@ final class CollectionServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        Gate::policy(Brand::class, BrandPolicy::class);
+
+        $this->commands([
+            SweepDueCommand::class,
+        ]);
     }
 }
