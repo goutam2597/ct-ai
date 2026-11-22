@@ -45,6 +45,10 @@ final class DemoCommand extends Command
 
         $workspace = Workspace::createWithOwner($owner->id, 'Acme');
 
+        // Demo mode: settings.is_sample = true drives the "Sample data" badge
+        // in the UI and blocks writes to settings, keys and users.
+        $workspace->forceFill(['settings' => ['is_sample' => true]])->save();
+
         $brand = Brand::query()->create([
             'workspace_id' => $workspace->id,
             'name' => 'Northwind',

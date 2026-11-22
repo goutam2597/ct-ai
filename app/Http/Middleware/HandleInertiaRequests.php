@@ -69,6 +69,7 @@ class HandleInertiaRequests extends Middleware
                 }
 
                 return [
+                    'isSample' => (bool) ($workspace->settings['is_sample'] ?? false),
                     'brands' => $workspace->brands()->withoutGlobalScopes()
                         ->orderBy('name')
                         ->get(['id', 'name'])

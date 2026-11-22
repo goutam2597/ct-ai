@@ -10,12 +10,12 @@ const page = usePage<{
         user: { id: number; name: string; email: string } | null;
         workspace: { id: number; name: string; role: string } | null;
     };
-    panel: { brands: Array<{ id: number; name: string }>; alerts: Array<{ id: number; rule: string; title: string; created_at: string }> };
+    panel: { brands: Array<{ id: number; name: string }>; alerts: Array<{ id: number; rule: string; title: string; created_at: string }>; isSample: boolean };
 }>();
 
 const app = computed(() => page.props.app);
 const auth = computed(() => page.props.auth);
-const panel = computed(() => page.props.panel ?? { brands: [], alerts: [] });
+const panel = computed(() => page.props.panel ?? { brands: [], alerts: [], isSample: false });
 
 const sidebarOpen = ref(document.documentElement.classList.contains('panel-sidebar-collapsed') === false);
 const bellOpen = ref(false);
@@ -92,6 +92,9 @@ const logout = () => useForm({}).post('/logout');
 
         <!-- Content -->
         <div class="flex min-h-screen flex-col transition-[padding] duration-300 ltr:pl-[var(--panel-sidebar-width)] rtl:pr-[var(--panel-sidebar-width)]">
+            <div v-if="panel.isSample" class="bg-amber-500 px-4 py-1.5 text-center text-xs font-semibold text-amber-950">
+                Sample data — this workspace contains demo content, not real measurements.
+            </div>
             <header class="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 dark:border-neutral-800 dark:bg-neutral-900">
                 <div class="flex items-center gap-3">
                     <button class="rounded-lg px-2 py-1 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800" @click="toggleSidebar">☰</button>
